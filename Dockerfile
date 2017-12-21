@@ -1,7 +1,5 @@
 FROM blitznote/debase:17.10
 
-ARG VER=master
-
 RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && perl -pi -e 's/archive.ubuntu.com/us.archive.ubuntu.com/' /etc/apt/sources.list \
