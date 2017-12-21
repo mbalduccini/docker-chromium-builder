@@ -1,27 +1,31 @@
-FROM blitznote/debootstrap-amd64:16.04 
+FROM blitznote/debase:17.10
+
+ARG VER=master
 
 RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && perl -pi -e 's/archive.ubuntu.com/us.archive.ubuntu.com/' /etc/apt/sources.list \
-    && perl -pi -e 's/amd64/i386,amd64/' /etc/apt/sources.list \
-    && apt-get update -y \
-    && apt-get dist-upgrade --allow-change-held-packages --ignore-hold --assume-yes
+    && apt-get update -y
 
 RUN \
-    apt-get install -y \
-    lsb-base lsb-release sudo build-essential git aptitude
-
-ADD https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT /tmp/install-build-deps.sh.b64
+    apt-get install -y aptitude coreutils
 
 RUN \
-    base64 -d < /tmp/install-build-deps.sh.b64 > /tmp/install-build-deps.sh \
-    && chmod +x /tmp/install-build-deps.sh \
-    && perl -pi -e 's/bash -e/bash -ve/' /tmp/install-build-deps.sh \
-    && perl -pi -e 's/if new_list.*/new_list=\$packages\nif false; then/' /tmp/install-build-deps.sh \
-    && sed -i -e '/^  new_list/,+2d' /tmp/install-build-deps.sh \
-    && perl -pi -e 's/apt-get install \$\{do_quietly-}/aptitude install --assume-yes/' /tmp/install-build-deps.sh \
-    && cat /tmp/install-build-deps.sh \
-    && /tmp/install-build-deps.sh --no-prompt --no-chromeos-fonts --no-nacl --no-arm
+    aptitude install -y \
+    lsb-base lsb-release sudo build-essential git
+
+RUN \
+    curl -s https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT | base64 -d \
+    | perl -pe 's/if new_list.*/new_list=\$packages\nif false; then/' \
+    | sed -e '/^  new_list/,+2d' \
+    | perl -pe 's/apt-get install \$\{do_quietly-}/aptitude install -y/' \
+    | bash -e -s - \
+		--no-arm \
+		--no-chromeos-fonts \
+		--no-nacl \
+        --no-prompt \
+        --no-syms \
+        --unsupported
 
 RUN \
     mkdir -p /chromium \
