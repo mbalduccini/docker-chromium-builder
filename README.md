@@ -7,6 +7,8 @@ suitable for use as an environment for building the Chromium source tree.
 This was created in order to automate builds/deployments of `headless_shell`
 for use with the Docker [`chrome-headless`](https://github.com/knq/chrome-headless) image.
 
+Note: you will need to have the chromium source tree already on disk.
+
 ## Running
 
 You can use this Docker image in the usual way:
@@ -17,9 +19,6 @@ $ docker pull knqz/chromium-builder
 
 # build latest chrome version
 $ docker run -it -v /path/to/chromium:/chromium -v /path/to/build:/build --rm knqz/chromium-builder /build/build.sh
-
-# build specific tag
-$ docker run -it -v /path/to/chromium:/chromium -v /path/to/build:/build --rm knqz/chromium-builder /build/build.sh 58.0.3006.3
 ```
 
 ## Building Image
@@ -27,5 +26,5 @@ $ docker run -it -v /path/to/chromium:/chromium -v /path/to/build:/build --rm kn
 The Docker image can be manually built the usual way:
 
 ```sh
-$ cd /path/to/chromium-builder && docker build -t chromium-builder .
+$ cd /path/to/chromium-builder && docker build -t knqz/chromium-builder .
 ```
