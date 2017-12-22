@@ -1,22 +1,33 @@
-FROM blitznote/debase:17.10
+FROM ubuntu:17.10
 
 RUN \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && perl -pi -e 's/archive.ubuntu.com/us.archive.ubuntu.com/' /etc/apt/sources.list \
     && apt-get update -y
 
 RUN \
-    apt-get install -y aptitude coreutils
+    apt install -y \
+        build-essential \
+        curl \
+        git \
+        lsb-base \
+        lsb-release \
+        sudo
 
 RUN \
-    aptitude install -y \
-    lsb-base lsb-release sudo build-essential git
+    cd / \
+    && git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+
+ENV PATH=/depot_tools:$PATH
+
+RUN \
+    echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections
 
 RUN \
     curl -s https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT | base64 -d \
     | perl -pe 's/if new_list.*/new_list=\$packages\nif false; then/' \
     | sed -e '/^  new_list/,+2d' \
-    | perl -pe 's/apt-get install \$\{do_quietly-}/aptitude install -y/' \
+    | perl -pe 's/apt-get install \$\{do_quietly-}/apt install -y/' \
     | bash -e -s - \
 		--no-arm \
 		--no-chromeos-fonts \
@@ -26,11 +37,4 @@ RUN \
         --unsupported
 
 RUN \
-    mkdir -p /chromium \
-    && cd / \
-    && git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-
-RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-ENV PATH=$PATH:/depot_tools
