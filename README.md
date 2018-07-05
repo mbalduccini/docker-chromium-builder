@@ -21,6 +21,20 @@ $ docker pull chromedp/chromium-builder
 $ docker run -it -v /path/to/chromium:/chromium -v /path/to/build:/build --rm chromedp/chromium-builder /build/build.sh
 ```
 
+For example, if you have the Chromium source tree checked out to
+`/media/src/chromium`, and have the [headless-shell][headless-shell] Docker
+source checked out to `~/src/docker/headless-shell`, you can build the latest
+`headless_shell` using the `build-headless_shell.sh` script via the following:
+
+```sh
+$ docker run -it \
+    -v /media/src/chromium:/chromium \
+    -v ~/src/docker/headless-shell:/build \
+    --rm \
+    chromedp/chromium-builder \
+    /build/build-headless_shell.sh /
+```
+
 ## Building Image
 
 The Docker image can be manually built the usual way:
@@ -34,5 +48,5 @@ $ cd ~/src/chromium-builder && docker build -t chromedp/chromium-builder .
 ```
 
 [chromium-builder]: https://github.com/chromedp/docker-chromium-builder
-[headless-shell]: https://github.com/chromedp/docker-headleess-shell
+[headless-shell]: https://github.com/chromedp/docker-headless-shell
 [docker-hub]: https://hub.docker.com/r/chromedp/chromium-builder/
