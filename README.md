@@ -4,10 +4,11 @@ The [chromium-builder][chromium-builder] project provides a Docker image,
 [`chromedp/chromium-builder`][docker-hub], suitable for use as an environment
 for building the Chromium source tree.
 
-This was created in order to automate builds/deployments of `headless_shell`
-for use with the Docker [`chromedp/headless-shell`][headless-shell] image.
+This was created in order to automate builds/deployments of Chromium's
+`headless_shell` for use with the Docker [`chromedp/headless-shell`][headless-shell]
+image.
 
-Note: you will need to have the chromium source tree already on disk.
+Note: you will need to have the Chromium source tree already on disk.
 
 ## Running
 
@@ -24,7 +25,7 @@ $ docker run -it -v /path/to/chromium:/chromium -v /path/to/build:/build --rm ch
 For example, if you have the Chromium source tree checked out to
 `/media/src/chromium`, and have the [headless-shell][headless-shell] Docker
 source checked out to `~/src/docker/headless-shell`, you can build the latest
-`headless_shell` using the `build-headless_shell.sh` script via the following:
+`headless-shell` using the `build-headless-shell.sh` script via the following:
 
 ```sh
 $ docker run -it \
@@ -32,7 +33,7 @@ $ docker run -it \
     -v ~/src/docker/headless-shell:/build \
     --rm \
     chromedp/chromium-builder \
-    /build/build-headless_shell.sh /
+    /build/build-headless-shell.sh /
 ```
 
 ## Building Image
