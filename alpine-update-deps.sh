@@ -6,8 +6,6 @@ SRC=$(realpath $(cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd ))
 
 set -e
 
-mkdir -p $SRC/alpine
-
 if [ ! -d $TREE/aports ]; then
   pushd $TREE &> /dev/null
   git clone git://git.alpinelinux.org/aports.git aports
