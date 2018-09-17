@@ -1,11 +1,11 @@
-FROM alpine:edge
+FROM andyshinn/alpine-abuild:edge
 
 COPY kenneth.shaw@knq.io-5b9e5e63.rsa.pub /etc/apk/keys/
 
 RUN \
-  echo "https://apk.brank.as/edge" | tee -a /etc/apk/repositories \
-  && apk update \
-  && apk add --no-cache \
+  echo "https://apk.brank.as/edge" | sudo tee -a /etc/apk/repositories \
+  && sudo apk update \
+  && sudo apk add --no-cache \
     alpine-sdk \
     git \
     python \
@@ -18,5 +18,5 @@ RUN \
   && cd /tmp/gn \
   && LD=/usr/bin/ld.gold python build/gen.py --no-sysroot \
   && ninja -C out \
-  && cp -f /tmp/gn/out/gn /usr/local/bin/gn \
+  && sudo cp -f /tmp/gn/out/gn /usr/local/bin/gn \
   && rm -rf /tmp/*
