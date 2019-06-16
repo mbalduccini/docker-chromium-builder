@@ -26,7 +26,7 @@ $ docker run -it -v d:\share:/media anticrisis/build-chromium
 Fetch Chromium source and run platform-dependent hooks:
 
 ```
-# mkdir /media/chromium && cd /media/chromium
+# mkdir -p /media/src/chromium && cd /media/src/chromium
 # fetch --no-hooks --no-history chromium
 ```
 
@@ -35,7 +35,7 @@ Take a nap here, because this is very slow.
 This next step runs all an extra set of platform-specific build dependencies:
 
 ```
-# cd src
+# cd /media/src/chromium/src
 # gclient runhooks
 ```
 
