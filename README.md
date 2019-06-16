@@ -14,7 +14,7 @@ Quick summary:
 First time, build the docker image:
 
 ```
-$ docker build -t anticrisis/build-chromium
+$ docker build -t anticrisis/build-chromium .
 ```
 
 Start the docker image (example uses Windows path to shared volume):
@@ -27,7 +27,7 @@ Fetch Chromium source and run platform-dependent hooks:
 
 ```
 # mkdir -p /media/src/chromium && cd /media/src/chromium
-# fetch --no-hooks --no-history chromium
+# fetch --nohooks --no-history chromium
 ```
 
 Take a nap here, because this is very slow.
