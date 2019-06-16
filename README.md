@@ -27,7 +27,7 @@ Fetch Chromium source and run platform-dependent hooks:
 
 ```
 # mkdir -p /media/src/chromium && cd /media/src/chromium
-# fetch --nohooks --no-history chromium
+# fetch --nohooks chromium
 ```
 
 Take a nap here, because this is very slow.
@@ -49,12 +49,18 @@ Run this script to update your source tree, generate a build system,
 and start the build:
 
 ```
-# /docker-headless-shell/build-headless-shell.sh /media/src my-version
+# /docker-headless-shell/build-headless-shell.sh 
 ```
 
-After the first build, I also found the need to tweak the 
-`build-headless-shell.sh` script to set `UPDATE=0` in order to avoid 
-a very time-consuming source tree update each time I ran it.
+While `build-headless-shell.sh` is a handy script for its purpose, there
+are some aspects that might not be that great in the general case.
+
+For example, I found the need to tweak the script to set `UPDATE=0`
+in order to avoid a very time-consuming source tree update each time I 
+ran it.
+
+The script also uses a `.last` file _in its source directory_, which
+will get wiped out when you reset your docker image.
 
 I also manually tweaked the `gn` arguments a bit to get it to build,
 because "jumbo build" was taking forever and I was afraid it might run
