@@ -1,3 +1,78 @@
+# About this fork
+
+I wanted to build a headless version of Chromium for linux and found
+the [upstream][chromium-builder] Docker image. Unfortunately, it
+didn't work right out of the box, but was easy enough to correct.
+
+This fork also adds the [docker-headless-shell][docker-headless-shell]
+project to the build image.
+
+After loading this image into a container, I was able to fetch the
+Chromium source tree according to [these instructions][chromium-build-instr].
+Quick summary:
+
+First time, build the docker image:
+
+```
+$ docker build -t anticrisis/build-chromium
+```
+
+Start the docker image (example uses Windows path to shared volume):
+
+```
+$ docker run -it -v d:\share:/media anticrisis/build-chromium
+```
+
+Fetch Chromium source and run platform-dependent hooks:
+
+```
+# mkdir /media/chromium && cd /media/chromium
+# fetch --no-hooks --no-history chromium
+```
+
+Take a nap here, because this is very slow.
+
+This next step runs all an extra set of platform-specific build dependencies:
+
+```
+# cd src
+# gclient runhooks
+```
+
+Note that all commands using chromium tools should be run from the `src` folder.
+
+The key thing about these preceeding steps is that the `fetch`, `gclient`
+ and `gn` tools are platform-dependent. So you want to run them from the 
+ build image, not your host platform (Windows in my case).
+
+Run this script to update your source tree, generate a build system,
+and start the build:
+
+```
+# /docker-headless-shell/build-headless-shell.sh /media/src my-version
+```
+
+After the first build, I also found the need to tweak the 
+`build-headless-shell.sh` script to set `UPDATE=0` in order to avoid 
+a very time-consuming source tree update each time I ran it.
+
+I also manually tweaked the `gn` arguments a bit to get it to build,
+because "jumbo build" was taking forever and I was afraid it might run
+out of memory eventually.
+
+```
+# <edit out/headless-shell/args.gn to set use_jumbo_build=false>
+```
+
+Regenerate build system using new `args.gn` settings:
+```
+# gn gen out/headless-shell
+```
+
+_The following is the upstream README:_
+
+----
+
 # About chromium-builder
 
 The [chromium-builder][chromium-builder] project provides a Docker image,
@@ -51,3 +126,6 @@ $ cd ~/src/chromium-builder && docker build -t chromedp/chromium-builder .
 [chromium-builder]: https://github.com/chromedp/docker-chromium-builder
 [headless-shell]: https://github.com/chromedp/docker-headless-shell
 [docker-hub]: https://hub.docker.com/r/chromedp/chromium-builder/
+[docker-headless-shell]: https://github.com/chromedp/docker-headless-shell.git
+[chromium-build-instr]: https://chromium.googlesource.com/chromium/src/+/master/docs/linux_build_instructions.md
+

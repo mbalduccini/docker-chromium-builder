@@ -1,22 +1,25 @@
-FROM ubuntu:18.04
+FROM ubuntu:latest
 
 RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && perl -pi -e 's/archive.ubuntu.com/us.archive.ubuntu.com/' /etc/apt/sources.list \
     && apt-get update -y
 
 RUN \
     apt-get install -y \
-        build-essential \
-        curl \
-        git \
-        lsb-base \
-        lsb-release \
-        sudo
+    build-essential \
+    curl \
+    git \
+    lsb-base \
+    lsb-release \
+    sudo
 
 RUN \
     cd / \
     && git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+
+RUN \
+    cd / \
+    && git clone https://github.com/chromedp/docker-headless-shell.git
 
 RUN \
     echo Etc/UTC > /etc/timezone
@@ -32,18 +35,24 @@ RUN \
 
 ENV PATH=/depot_tools:$PATH
 
+# needed for install-build-deps.sh
+RUN \
+    apt-get install -y python
+
 RUN \
     curl -s https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT | base64 -d \
-    | perl -pe 's/if new_list.*/new_list=\$packages\nif false; then/' \
-    | sed -e '/^  new_list/,+2d' \
     | perl -pe 's/apt-get install \$\{do_quietly-}/DEBIAN_FRONTEND=noninteractive apt-get install -y/' \
     | bash -e -s - \
-        --no-syms \
-        --no-arm \
-        --no-chromeos-fonts \
-        --no-nacl \
-        --no-prompt \
-        --unsupported
+    --no-prompt \
+    --no-chromeos-fonts \
+    --no-arm \
+    --no-syms \
+    --no-nacl \
+    --no-backwards-compatible
+
+# needed to build mojo
+RUN \
+    apt-get install -y default-jdk
 
 RUN \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
