@@ -37,11 +37,11 @@ ENV PATH=/depot_tools:$PATH
 
 # needed for install-build-deps.sh
 RUN \
-    apt-get install -y python
+    apt-get install -y python-is-python3
 
 RUN \
     curl -s https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT | base64 -d \
-    | perl -pe 's/apt-get install \$\{do_quietly-}/DEBIAN_FRONTEND=noninteractive apt-get install -y/' \
+    | perl -pe 's/apt-get install $\{do_quietly-}/DEBIAN_FRONTEND=noninteractive apt-get install -y/' \
     | bash -e -s - \
     --no-prompt \
     --no-chromeos-fonts \
